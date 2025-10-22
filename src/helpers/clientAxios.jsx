@@ -1,7 +1,5 @@
-// config/clientAxios.js
 import axios from "axios";
 
-// ⚡ Usar variable de entorno para la URL del backend
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const clientAxios = axios.create({
@@ -11,19 +9,11 @@ const clientAxios = axios.create({
 // 🔑 Interceptor para agregar el token automáticamente
 clientAxios.interceptors.request.use(
   (config) => {
-    // Obtener el token del localStorage
-    const userData = localStorage.getItem("user");
+    // 🔥 CORRECCIÓN: Obtener el token directamente
+    const token = localStorage.getItem("token");
 
-    if (userData) {
-      try {
-        const { token } = JSON.parse(userData);
-        if (token) {
-          // Agregar el token al header Authorization
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-      } catch (error) {
-        console.error("Error al parsear userData:", error);
-      }
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
@@ -39,8 +29,9 @@ clientAxios.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token expirado o inválido
+      localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.location.href = "/login"; // Redirigir al login
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
