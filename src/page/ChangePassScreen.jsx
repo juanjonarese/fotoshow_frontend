@@ -24,7 +24,6 @@ const handleClickFormChangePass = async (ev) => {
     alert("Contraseña actualizada correctamente");
 
     // Opcional: redirigir al login
-    // navigate('/login');
   } catch (error) {
     console.error(error);
     alert(error.response?.data?.msg || "Error al cambiar la contraseña");
