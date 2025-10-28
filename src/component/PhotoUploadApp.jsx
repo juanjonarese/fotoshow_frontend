@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Upload, X, Image as ImageIcon, Palette } from "lucide-react";
+import { Upload, X, Image as ImageIcon, Palette, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import clientAxios from "../helpers/clientAxios"; // ⚡ CAMBIO: Importar clientAxios
+import clientAxios from "../helpers/clientAxios";
 import Swal from "sweetalert2";
 
 const PhotoUpload = () => {
@@ -297,11 +297,9 @@ const PhotoUpload = () => {
       console.error("💥 ERROR MESSAGE:", err.message);
       console.error("💥 ERROR STACK:", err.stack);
 
-      // Mostrar información detallada del error
       let mensajeError = "No se pudo enviar el pedido";
 
       if (err.response) {
-        // Error del servidor
         console.error("❌ Error del servidor:", {
           status: err.response.status,
           statusText: err.response.statusText,
@@ -326,7 +324,6 @@ const PhotoUpload = () => {
           err.response.data?.error ||
           mensajeError;
       } else if (err.request) {
-        // Error de red
         console.error(
           "❌ Error de red (sin respuesta del servidor):",
           err.request
@@ -334,7 +331,6 @@ const PhotoUpload = () => {
         mensajeError =
           "Error de conexión. Verifica tu internet y vuelve a intentar.";
       } else {
-        // Error al configurar la petición
         console.error("❌ Error al configurar la petición:", err.message);
         mensajeError = err.message;
       }
@@ -413,78 +409,88 @@ const PhotoUpload = () => {
           />
 
           {files.length > 0 && (
-            <div className="card shadow-sm mb-4">
-              <div className="card-header bg-light">
-                <div className="d-flex justify-content-between align-items-center">
-                  <h6 className="mb-0 fw-bold">
-                    Archivos seleccionados ({files.length})
-                  </h6>
-                  <button
-                    className="btn btn-sm btn-outline-danger"
-                    onClick={() => setFiles([])}
-                    disabled={uploading}
-                  >
-                    Limpiar todo
-                  </button>
+            <>
+              <div className="card shadow-sm mb-4">
+                <div className="card-header bg-light">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h6 className="mb-0 fw-bold">
+                      Archivos seleccionados ({files.length})
+                    </h6>
+                    <button
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => setFiles([])}
+                      disabled={uploading}
+                    >
+                      Limpiar todo
+                    </button>
+                  </div>
+                </div>
+                <div className="card-body p-0">
+                  {files.map((fileObj) => (
+                    <div
+                      key={fileObj.id}
+                      className="d-flex align-items-center p-3 border-bottom"
+                    >
+                      <div className="flex-shrink-0 me-3">
+                        <div
+                          className="ratio ratio-1x1 rounded"
+                          style={{ width: "60px" }}
+                        >
+                          <img
+                            src={fileObj.preview}
+                            alt={fileObj.name}
+                            className="object-fit-cover rounded"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex-grow-1 me-3">
+                        <div className="fw-medium text-dark mb-1">
+                          {fileObj.name}
+                        </div>
+                        <div className="small text-muted">
+                          {formatFileSize(fileObj.size)}
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0 d-flex align-items-center gap-2">
+                        <span className="badge bg-secondary">Listo</span>
+                        <button
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => removeFile(fileObj.id)}
+                          disabled={uploading}
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <div className="card-body p-0">
-                {files.map((fileObj) => (
-                  <div
-                    key={fileObj.id}
-                    className="d-flex align-items-center p-3 border-bottom"
-                  >
-                    <div className="flex-shrink-0 me-3">
-                      <div
-                        className="ratio ratio-1x1 rounded"
-                        style={{ width: "60px" }}
-                      >
-                        <img
-                          src={fileObj.preview}
-                          alt={fileObj.name}
-                          className="object-fit-cover rounded"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex-grow-1 me-3">
-                      <div className="fw-medium text-dark mb-1">
-                        {fileObj.name}
-                      </div>
-                      <div className="small text-muted">
-                        {formatFileSize(fileObj.size)}
-                      </div>
-                    </div>
-                    <div className="flex-shrink-0 d-flex align-items-center gap-2">
-                      <span className="badge bg-secondary">Listo</span>
-                      <button
-                        className="btn btn-sm btn-outline-danger"
-                        onClick={() => removeFile(fileObj.id)}
-                        disabled={uploading}
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
-          {files.length > 0 && (
-            <div className="text-center mt-4">
-              <button
-                onClick={handleContinuar}
-                className="btn btn-success btn-lg"
-                disabled={uploading}
-              >
-                Continuar con el pedido
-              </button>
-            </div>
+              {/* Botones mejorados */}
+              <div className="d-flex gap-3 justify-content-center flex-wrap">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="btn btn-outline-primary d-flex align-items-center gap-2"
+                  disabled={uploading}
+                >
+                  <Plus size={20} />
+                  Subir otra foto
+                </button>
+                <button
+                  onClick={handleContinuar}
+                  className="btn btn-success btn-lg d-flex align-items-center gap-2"
+                  disabled={uploading}
+                >
+                  <ImageIcon size={20} />
+                  Continuar con el pedido
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
 
-      {/* MODAL MEJORADO */}
+      {/* MODAL CON DISEÑO CONSISTENTE */}
       {showModal && (
         <div
           className="modal show d-block"
@@ -495,220 +501,220 @@ const PhotoUpload = () => {
             className="modal-dialog modal-dialog-centered modal-lg"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-content">
-              <div className="modal-header bg-primary text-white">
-                <h5 className="modal-title fw-bold">
-                  <ImageIcon className="me-2" size={24} />
-                  Configuración del pedido
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close btn-close-white"
-                  onClick={() => setShowModal(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                {/* OPCIONES DE IMPRESIÓN */}
-                <div className="row mb-4">
-                  <div className="col-md-6">
-                    <label className="form-label fw-bold">
-                      <ImageIcon size={18} className="me-1" />
-                      Tamaño de impresión *
-                    </label>
-                    <select
-                      className="form-select"
-                      value={formData.tamanioFoto}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          tamanioFoto: e.target.value,
-                        })
-                      }
-                    >
-                      {tamaniosDisponibles.map((tamanio) => (
-                        <option key={tamanio.valor} value={tamanio.valor}>
-                          {tamanio.etiqueta} - ${tamanio.precio} c/u
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="col-md-6">
-                    <label className="form-label fw-bold">
-                      <Palette size={18} className="me-1" />
-                      Tipo de impresión *
-                    </label>
-                    <select
-                      className="form-select"
-                      value={formData.tipoImpresion}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          tipoImpresion: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="color">Color</option>
-                      <option value="sepia">Sepia (tono vintage)</option>
-                      <option value="bn">Blanco y Negro</option>
-                    </select>
-                  </div>
+            <div className="modal-content rounded shadow">
+              <div className="modal-body p-4">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                  <h3 className="fw-bold mb-0">Configuración del pedido</h3>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowModal(false)}
+                    disabled={uploading}
+                  ></button>
                 </div>
 
-                {/* RESUMEN DEL PRECIO */}
-                <div className="alert alert-info mb-4">
-                  <div className="d-flex justify-content-between">
-                    <span>
-                      <strong>{files.length}</strong> foto
-                      {files.length > 1 ? "s" : ""} × ${precioPorFoto}
-                    </span>
-                    <strong className="text-primary">
-                      Total estimado: ${total}
-                    </strong>
-                  </div>
-                  <small className="text-muted d-block mt-1">
-                    * El precio final puede variar según el método de entrega
-                  </small>
-                </div>
-
-                {/* TIPO DE ENTREGA */}
-                <div className="mb-4">
-                  <label className="form-label fw-bold">
-                    ¿Cómo querés recibir tu pedido? *
-                  </label>
-                  <div className="d-flex gap-3">
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="tipoEntrega"
-                        id="envio"
-                        value="envio"
-                        checked={formData.tipoEntrega === "envio"}
+                <form>
+                  {/* OPCIONES DE IMPRESIÓN */}
+                  <div className="row mb-3">
+                    <div className="col-md-6 mb-3 mb-md-0">
+                      <label className="form-label">
+                        Tamaño de impresión *
+                      </label>
+                      <select
+                        className="form-control"
+                        value={formData.tamanioFoto}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            tipoEntrega: e.target.value,
+                            tamanioFoto: e.target.value,
                           })
                         }
-                      />
-                      <label className="form-check-label" htmlFor="envio">
-                        Envío a domicilio
-                      </label>
+                      >
+                        {tamaniosDisponibles.map((tamanio) => (
+                          <option key={tamanio.valor} value={tamanio.valor}>
+                            {tamanio.etiqueta} - ${tamanio.precio} c/u
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="tipoEntrega"
-                        id="retiro"
-                        value="retiro"
-                        checked={formData.tipoEntrega === "retiro"}
+
+                    <div className="col-md-6">
+                      <label className="form-label">Tipo de impresión *</label>
+                      <select
+                        className="form-control"
+                        value={formData.tipoImpresion}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            tipoEntrega: e.target.value,
+                            tipoImpresion: e.target.value,
                           })
                         }
-                      />
-                      <label className="form-check-label" htmlFor="retiro">
-                        Retiro en local
-                      </label>
+                      >
+                        <option value="color">Color</option>
+                        <option value="sepia">Sepia (tono vintage)</option>
+                        <option value="bn">Blanco y Negro</option>
+                      </select>
                     </div>
                   </div>
-                </div>
 
-                {/* DIRECCIÓN SI ES ENVÍO */}
-                {formData.tipoEntrega === "envio" && (
+                  {/* RESUMEN DEL PRECIO */}
+                  <div className="alert alert-info mb-3">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span>
+                        <strong>{files.length}</strong> foto
+                        {files.length > 1 ? "s" : ""} × ${precioPorFoto}
+                      </span>
+                      <strong className="text-primary">
+                        Total estimado: ${total}
+                      </strong>
+                    </div>
+                    <small className="text-muted d-block mt-1">
+                      * El precio final puede variar según el método de entrega
+                    </small>
+                  </div>
+
+                  {/* TIPO DE ENTREGA */}
                   <div className="mb-3">
-                    <label htmlFor="direccion" className="form-label fw-bold">
-                      Dirección de envío *
+                    <label className="form-label">
+                      ¿Cómo querés recibir tu pedido? *
                     </label>
-                    <textarea
-                      id="direccion"
+                    <div className="d-flex gap-3">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="tipoEntrega"
+                          id="envio"
+                          value="envio"
+                          checked={formData.tipoEntrega === "envio"}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              tipoEntrega: e.target.value,
+                            })
+                          }
+                        />
+                        <label className="form-check-label" htmlFor="envio">
+                          a domicilio
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="tipoEntrega"
+                          id="retiro"
+                          value="retiro"
+                          checked={formData.tipoEntrega === "retiro"}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              tipoEntrega: e.target.value,
+                            })
+                          }
+                        />
+                        <label className="form-check-label" htmlFor="retiro">
+                          Retiro en local
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* DIRECCIÓN SI ES ENVÍO */}
+                  {formData.tipoEntrega === "envio" && (
+                    <div className="mb-3">
+                      <label htmlFor="direccion" className="form-label">
+                        Dirección de envío *
+                      </label>
+                      <textarea
+                        id="direccion"
+                        className="form-control"
+                        rows="2"
+                        placeholder="Ej: San Lorenzo 418, San Miguel de Tucumán"
+                        value={formData.direccion}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            direccion: e.target.value,
+                          })
+                        }
+                      />
+                      <small className="text-muted">
+                        Incluí calle, número, y ciudad
+                      </small>
+                    </div>
+                  )}
+
+                  {/* TELÉFONO */}
+                  <div className="mb-3">
+                    <label htmlFor="telefono" className="form-label">
+                      Teléfono de contacto *
+                    </label>
+                    <input
+                      type="tel"
+                      id="telefono"
                       className="form-control"
-                      rows="3"
-                      placeholder="Ej: Av. Corrientes 1234, Piso 5, Depto B, CABA"
-                      value={formData.direccion}
+                      placeholder="Ej: 381..."
+                      value={formData.telefono}
                       onChange={(e) =>
-                        setFormData({ ...formData, direccion: e.target.value })
+                        setFormData({ ...formData, telefono: e.target.value })
                       }
                     />
                     <small className="text-muted">
-                      Incluí calle, número, piso, depto y ciudad
+                      Te contactaremos por WhatsApp
                     </small>
                   </div>
-                )}
 
-                {/* TELÉFONO */}
-                <div className="mb-3">
-                  <label htmlFor="telefono" className="form-label fw-bold">
-                    Teléfono de contacto *
-                  </label>
-                  <input
-                    type="tel"
-                    id="telefono"
-                    className="form-control"
-                    placeholder="Ej: +54 9 381 123-4567"
-                    value={formData.telefono}
-                    onChange={(e) =>
-                      setFormData({ ...formData, telefono: e.target.value })
-                    }
-                  />
-                  <small className="text-muted">
-                    Te contactaremos por WhatsApp o llamada
-                  </small>
-                </div>
+                  {/* COMENTARIOS ADICIONALES */}
+                  <div className="mb-4">
+                    <label htmlFor="comentarios" className="form-label">
+                      Comentarios adicionales (opcional)
+                    </label>
+                    <textarea
+                      id="comentarios"
+                      className="form-control"
+                      rows="2"
+                      placeholder="Ej: Necesito el pedido para el viernes"
+                      value={formData.comentarios}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          comentarios: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
 
-                {/* COMENTARIOS ADICIONALES */}
-                <div className="mb-3">
-                  <label htmlFor="comentarios" className="form-label fw-bold">
-                    Comentarios adicionales (opcional)
-                  </label>
-                  <textarea
-                    id="comentarios"
-                    className="form-control"
-                    rows="3"
-                    placeholder="Ej: Por favor, impriman con borde blanco. Necesito el pedido para el viernes."
-                    value={formData.comentarios}
-                    onChange={(e) =>
-                      setFormData({ ...formData, comentarios: e.target.value })
-                    }
-                  />
-                  <small className="text-muted">
-                    Dejanos cualquier indicación especial sobre tu pedido
-                  </small>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowModal(false)}
-                  disabled={uploading}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-success"
-                  onClick={enviarPedido}
-                  disabled={uploading}
-                >
-                  {uploading ? (
-                    <>
-                      <div
-                        className="spinner-border spinner-border-sm me-2"
-                        role="status"
-                      >
-                        <span className="visually-hidden">Enviando...</span>
-                      </div>
-                      Enviando...
-                    </>
-                  ) : (
-                    <>Confirmar pedido (${total})</>
-                  )}
-                </button>
+                  {/* BOTONES */}
+                  <div className="d-flex gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-secondary flex-fill"
+                      onClick={() => setShowModal(false)}
+                      disabled={uploading}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-login flex-fill"
+                      onClick={enviarPedido}
+                      disabled={uploading}
+                    >
+                      {uploading ? (
+                        <>
+                          <span
+                            className="spinner-border spinner-border-sm me-2"
+                            role="status"
+                          ></span>
+                          Enviando...
+                        </>
+                      ) : (
+                        `Confirmar pedido ($${total})`
+                      )}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
