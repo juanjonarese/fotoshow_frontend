@@ -201,9 +201,22 @@ const PhotoUpload = () => {
     try {
       setUploading(true);
 
-      // ⚡ CAMBIO 1: Crear pedido usando clientAxios (ya incluye el token automáticamente)
+      console.log("🚀 PASO 1: Iniciando creación de pedido");
+
+      // ⚡ PASO 1: Crear pedido
       let pedido = pedidoId;
       if (!pedido) {
+        console.log("📝 Datos del pedido a enviar:", {
+          tipoEntrega: formData.tipoEntrega,
+          direccion:
+            formData.tipoEntrega === "envio" ? formData.direccion : null,
+          telefono: formData.telefono,
+          tamanioFoto: formData.tamanioFoto,
+          tipoImpresion: formData.tipoImpresion,
+          comentarios: formData.comentarios,
+          cantidadFotos: files.length,
+        });
+
         const resPedido = await clientAxios.post("/pedidos", {
           tipoEntrega: formData.tipoEntrega,
           direccion:
@@ -214,25 +227,52 @@ const PhotoUpload = () => {
           comentarios: formData.comentarios,
           cantidadFotos: files.length,
         });
+
         pedido = resPedido.data.pedidoId;
         setPedidoId(pedido);
+        console.log("✅ PASO 1 COMPLETADO: Pedido creado con ID:", pedido);
+      } else {
+        console.log("✅ PASO 1 OMITIDO: Ya existe pedido con ID:", pedido);
       }
 
-      // ⚡ CAMBIO 2: Subir fotos usando clientAxios
-      for (const fileObj of files) {
+      console.log("🚀 PASO 2: Iniciando subida de fotos");
+      console.log(`📸 Total de fotos a subir: ${files.length}`);
+
+      // ⚡ PASO 2: Subir fotos una por una
+      for (let i = 0; i < files.length; i++) {
+        const fileObj = files[i];
+        console.log(
+          `📤 Subiendo foto ${i + 1}/${files.length}: ${fileObj.name}`
+        );
+
         const formDataUpload = new FormData();
         formDataUpload.append("foto", fileObj.file);
         formDataUpload.append("pedido", pedido);
 
-        await clientAxios.post("/fotos/subir", formDataUpload, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        try {
+          await clientAxios.post("/fotos/subir", formDataUpload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          console.log(`✅ Foto ${i + 1}/${files.length} subida correctamente`);
+        } catch (fotoError) {
+          console.error(`❌ Error al subir foto ${i + 1}:`, fotoError);
+          throw new Error(
+            `Error al subir foto ${fileObj.name}: ${fotoError.message}`
+          );
+        }
       }
 
-      // ⚡ CAMBIO 3: Finalizar pedido usando clientAxios
+      console.log("✅ PASO 2 COMPLETADO: Todas las fotos subidas");
+
+      console.log("🚀 PASO 3: Finalizando pedido");
+
+      // ⚡ PASO 3: Finalizar pedido
       await clientAxios.post(`/pedidos/${pedido}/finalizar`);
+
+      console.log("✅ PASO 3 COMPLETADO: Pedido finalizado");
+      console.log("🎉 PROCESO COMPLETO EXITOSO");
 
       Swal.fire(
         "¡Pedido enviado! 🎉",
@@ -252,26 +292,59 @@ const PhotoUpload = () => {
         comentarios: "",
       });
     } catch (err) {
-      console.error("Error al enviar pedido:", err);
+      console.error("💥 ERROR EN ENVIAR PEDIDO:", err);
+      console.error("💥 ERROR RESPONSE:", err.response);
+      console.error("💥 ERROR MESSAGE:", err.message);
+      console.error("💥 ERROR STACK:", err.stack);
 
-      // El interceptor ya maneja el 401, pero por si acaso:
-      if (err.response?.status === 401) {
-        Swal.fire({
-          icon: "error",
-          title: "Sesión expirada",
-          text: "Tu sesión expiró. Inicia sesión nuevamente.",
-          confirmButtonText: "Ir al Login",
-        }).then(() => {
-          localStorage.removeItem("token");
-          navigate("/login");
+      // Mostrar información detallada del error
+      let mensajeError = "No se pudo enviar el pedido";
+
+      if (err.response) {
+        // Error del servidor
+        console.error("❌ Error del servidor:", {
+          status: err.response.status,
+          statusText: err.response.statusText,
+          data: err.response.data,
         });
-      } else {
-        Swal.fire(
-          "Error",
-          err.response?.data?.mensaje || "No se pudo enviar el pedido",
-          "error"
+
+        if (err.response.status === 401) {
+          Swal.fire({
+            icon: "error",
+            title: "Sesión expirada",
+            text: "Tu sesión expiró. Inicia sesión nuevamente.",
+            confirmButtonText: "Ir al Login",
+          }).then(() => {
+            localStorage.removeItem("token");
+            navigate("/login");
+          });
+          return;
+        }
+
+        mensajeError =
+          err.response.data?.mensaje ||
+          err.response.data?.error ||
+          mensajeError;
+      } else if (err.request) {
+        // Error de red
+        console.error(
+          "❌ Error de red (sin respuesta del servidor):",
+          err.request
         );
+        mensajeError =
+          "Error de conexión. Verifica tu internet y vuelve a intentar.";
+      } else {
+        // Error al configurar la petición
+        console.error("❌ Error al configurar la petición:", err.message);
+        mensajeError = err.message;
       }
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: mensajeError,
+        footer: "<small>Si el problema persiste, contacta a soporte</small>",
+      });
     } finally {
       setUploading(false);
     }
@@ -520,7 +593,7 @@ const PhotoUpload = () => {
                         }
                       />
                       <label className="form-check-label" htmlFor="envio">
-                        📦 Envío a domicilio
+                        Envío a domicilio
                       </label>
                     </div>
                     <div className="form-check">
@@ -539,7 +612,7 @@ const PhotoUpload = () => {
                         }
                       />
                       <label className="form-check-label" htmlFor="retiro">
-                        🏪 Retiro en local
+                        Retiro en local
                       </label>
                     </div>
                   </div>
