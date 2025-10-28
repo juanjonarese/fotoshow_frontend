@@ -1,17 +1,14 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Camera, LogOut, Upload } from "lucide-react";
-import { AuthContext } from "../context/AuthContext"; // 👈 Importamos el contexto
+import { AuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
-
-  // 👇 Ahora obtenemos el estado desde el contexto
   const { isLoggedIn, logout } = useContext(AuthContext);
 
-  // Función para cerrar sesión
   const handleLogout = () => {
-    logout(); // Llamamos a la función del contexto
+    logout();
     navigate("/");
     alert("Sesión cerrada correctamente");
   };
@@ -37,22 +34,12 @@ const Navbar = () => {
 
         {/* Menú */}
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto align-items-center">
+          <ul className="navbar-nav ms-auto align-items-lg-center gap-2">
             <li className="nav-item">
               <Link to="/" className="nav-link">
                 Inicio
               </Link>
             </li>
-            {/* <li className="nav-item">
-              <Link to="/caracteristicas" className="nav-link">
-                Características
-              </Link>
-            </li> */}
-            {/* <li className="nav-item">
-              <Link to="/precios" className="nav-link">
-                Precios
-              </Link>
-            </li> */}
             <li className="nav-item">
               <Link to="/contacto" className="nav-link">
                 Contacto
@@ -63,16 +50,19 @@ const Navbar = () => {
             {isLoggedIn ? (
               <>
                 {/* Si está logeado: Subir fotos + Cerrar sesión */}
-                <li className="nav-item ms-2">
-                  <Link to="/up-photo" className="btn btn-primary btn-sm">
+                <li className="nav-item">
+                  <Link
+                    to="/up-photo"
+                    className="btn btn-primary btn-sm d-flex align-items-center justify-content-center"
+                  >
                     <Upload size={16} className="me-1" />
                     Subir Fotos
                   </Link>
                 </li>
-                <li className="nav-item ms-2">
+                <li className="nav-item">
                   <button
                     onClick={handleLogout}
-                    className="btn btn-outline-danger btn-sm"
+                    className="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center w-100"
                   >
                     <LogOut size={16} className="me-1" />
                     Cerrar Sesión
@@ -82,13 +72,19 @@ const Navbar = () => {
             ) : (
               <>
                 {/* Si NO está logeado: Iniciar sesión + Registrarse */}
-                <li className="nav-item ms-2">
-                  <Link to="/login" className="btn btn-outline-primary btn-sm">
+                <li className="nav-item">
+                  <Link
+                    to="/login"
+                    className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
+                  >
                     Iniciar Sesión
                   </Link>
                 </li>
-                <li className="nav-item ms-2">
-                  <Link to="/registrarse" className="btn btn-primary btn-sm">
+                <li className="nav-item">
+                  <Link
+                    to="/registrarse"
+                    className="btn btn-primary btn-sm d-flex align-items-center justify-content-center"
+                  >
                     Registrarse
                   </Link>
                 </li>
