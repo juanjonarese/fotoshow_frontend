@@ -1,31 +1,77 @@
-const handleClickFormChangePass = async (ev) => {
-  ev.preventDefault();
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom"; // ← Agregá useNavigate
+import { Container } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import clientAxios from "../helpers/clientAxios";
 
-  const tokenUrl = new URLSearchParams(location.search).get("token");
+const ChangePassScreen = () => {
+  const location = useLocation();
+  const navigate = useNavigate(); // ← Agregá esto
 
-  if (!tokenUrl) {
-    alert("Token inválido o faltante");
-    return;
-  }
+  const [nuevaContrasenia, setNuevaContrasenia] = useState("");
+  const [confirmarNuevaContrasenia, setConfirmarNuevaContrasenia] =
+    useState("");
 
-  if (nuevaContrasenia !== confirmarNuevaContrasenia) {
-    alert("Las contraseñas no coinciden");
-    return;
-  }
+  const handleClickFormChangePass = async (ev) => {
+    ev.preventDefault();
 
-  try {
-    // ✅ CORRECCIÓN: Enviar token y contraseña en el body
-    const res = await clientAxios.post(`/usuarios/changeNewPassUser`, {
-      token: tokenUrl, // ✅ Token en el body
-      nuevaContrasenia: nuevaContrasenia, // ✅ Campo correcto
-    });
+    const tokenUrl = new URLSearchParams(location.search).get("token");
 
-    console.log(res);
-    alert("Contraseña actualizada correctamente");
+    if (!tokenUrl) {
+      alert("Token inválido o faltante");
+      return;
+    }
 
-    // Opcional: redirigir al login
-  } catch (error) {
-    console.error(error);
-    alert(error.response?.data?.msg || "Error al cambiar la contraseña");
-  }
+    if (nuevaContrasenia !== confirmarNuevaContrasenia) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
+
+    try {
+      const res = await clientAxios.post(`/usuarios/changeNewPassUser`, {
+        token: tokenUrl,
+        nuevaContrasenia: nuevaContrasenia,
+      });
+
+      console.log(res);
+      alert("Contraseña actualizada correctamente");
+      navigate("/login"); // Redirigir al login
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.msg || "Error al cambiar la contraseña");
+    }
+  };
+
+  return (
+    <Container className="d-flex justify-content-center py-5">
+      <Form onSubmit={handleClickFormChangePass}>
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Nueva Contraseña</Form.Label>
+          <Form.Control
+            type="password"
+            onChange={(ev) => setNuevaContrasenia(ev.target.value)}
+            value={nuevaContrasenia}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>Repetir Contraseña</Form.Label>
+          <Form.Control
+            type="password"
+            onChange={(ev) => setConfirmarNuevaContrasenia(ev.target.value)}
+            value={confirmarNuevaContrasenia}
+          />
+        </Form.Group>
+
+        <div className="text-center btn-login">
+          <Button variant="success" type="submit">
+            Enviar Datos
+          </Button>
+        </div>
+      </Form>
+    </Container>
+  );
 };
+
+export default ChangePassScreen;
