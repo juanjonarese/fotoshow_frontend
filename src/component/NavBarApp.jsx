@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Camera, LogOut, Upload } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
+import Swal from "sweetalert2";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -10,7 +11,13 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     navigate("/");
-    alert("Sesión cerrada correctamente");
+    Swal.fire({
+      icon: "success",
+      title: "Sesión cerrada",
+      text: "Tu sesión se cerró correctamente",
+      timer: 2000,
+      showConfirmButton: false
+    });
   };
 
   return (

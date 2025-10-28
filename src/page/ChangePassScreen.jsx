@@ -4,6 +4,7 @@ import { Container, Card } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import clientAxios from "../helpers/clientAxios";
+import Swal from "sweetalert2";
 
 const ChangePassScreen = () => {
   const location = useLocation();
@@ -19,12 +20,22 @@ const ChangePassScreen = () => {
     const tokenUrl = new URLSearchParams(location.search).get("token");
 
     if (!tokenUrl) {
-      alert("Token inválido o faltante");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Token inválido o faltante",
+        confirmButtonColor: "#dc3545"
+      });
       return;
     }
 
     if (nuevaContrasenia !== confirmarNuevaContrasenia) {
-      alert("Las contraseñas no coinciden");
+      Swal.fire({
+        icon: "warning",
+        title: "Contraseñas no coinciden",
+        text: "Las contraseñas ingresadas no coinciden",
+        confirmButtonColor: "#0d6efd"
+      });
       return;
     }
 
@@ -36,11 +47,22 @@ const ChangePassScreen = () => {
       );
 
       console.log(res);
-      alert("Contraseña actualizada correctamente");
+      await Swal.fire({
+        icon: "success",
+        title: "¡Contraseña actualizada!",
+        text: "Tu contraseña se actualizó correctamente",
+        confirmButtonColor: "#0d6efd",
+        confirmButtonText: "Ir al Login"
+      });
       navigate("/login");
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.msg || "Error al cambiar la contraseña");
+      Swal.fire({
+        icon: "error",
+        title: "Error al cambiar contraseña",
+        text: error.response?.data?.msg || "Error al cambiar la contraseña",
+        confirmButtonColor: "#dc3545"
+      });
     }
   };
 

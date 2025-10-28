@@ -75,7 +75,12 @@ const PhotoUpload = () => {
     const errors = [];
 
     if (files.length + fileArray.length > maxFiles) {
-      alert(`Máximo ${maxFiles} archivos permitidos`);
+      Swal.fire({
+        icon: "warning",
+        title: "Límite de archivos",
+        text: `Máximo ${maxFiles} archivos permitidos`,
+        confirmButtonColor: "#0d6efd"
+      });
       return;
     }
 
@@ -96,7 +101,12 @@ const PhotoUpload = () => {
     });
 
     if (errors.length > 0) {
-      alert(errors.join("\n"));
+      Swal.fire({
+        icon: "error",
+        title: "Errores en los archivos",
+        html: errors.join("<br>"),
+        confirmButtonColor: "#dc3545"
+      });
     }
 
     setFiles((prev) => [...prev, ...validFiles]);
