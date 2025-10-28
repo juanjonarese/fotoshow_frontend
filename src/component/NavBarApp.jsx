@@ -16,7 +16,7 @@ const Navbar = () => {
       title: "Sesión cerrada",
       text: "Tu sesión se cerró correctamente",
       timer: 2000,
-      showConfirmButton: false
+      showConfirmButton: false,
     });
   };
 
@@ -89,7 +89,7 @@ const Navbar = () => {
                 </li>
                 <li className="nav-item">
                   <Link
-                    to="/registrarse"
+                    to="/register"
                     className="btn btn-primary btn-sm d-flex align-items-center justify-content-center"
                   >
                     Registrarse
