@@ -5,6 +5,7 @@ import RegisterScreen from "../page/RegiterScreen.jsx";
 import LoginScreen from "../page/LoginScreen.jsx";
 import ChangePassScreen from "../page/ChangePassScreen.jsx";
 import RecoveryPassMailScreen from "../page/RecoveryPassScreen.jsx";
+import ContactScreen from "../page/ContactScreen.jsx";
 
 const PrincipalRoutes = () => {
   return (
@@ -15,6 +16,7 @@ const PrincipalRoutes = () => {
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/changepass" element={<ChangePassScreen />} />
       <Route path="/recoverymail" element={<RecoveryPassMailScreen />} />
+      <Route path="/contacto" element={<ContactScreen />} />
 
       {/* Solo para admins
       <Route
