@@ -141,7 +141,7 @@ const HomeScreen = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="cta-section py-5">
+      <section className="cta-section">
         <div className="container py-5 text-center">
           <h2 className="display-5 fw-bold text-white mb-4">
             ¿Listo para empezar a subir tus fotos?
