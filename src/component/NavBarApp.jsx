@@ -1,12 +1,15 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Camera, LogOut, Upload } from "lucide-react";
+import { Camera, LogOut, Upload, ShoppingBag } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import Swal from "sweetalert2";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useContext(AuthContext);
+  const { isLoggedIn, logout, user } = useContext(AuthContext);
+
+  // Verificar si el usuario es admin
+  const esAdmin = user?.rol === "admin";
 
   const handleLogout = () => {
     logout();
@@ -48,6 +51,11 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
+              <Link to="/productos" className="nav-link">
+                Productos
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link to="/contacto" className="nav-link">
                 Contacto
               </Link>
@@ -56,7 +64,7 @@ const Navbar = () => {
             {/* Mostrar según si está logeado o no */}
             {isLoggedIn ? (
               <>
-                {/* Si está logeado: Subir fotos + Cerrar sesión */}
+                {/* Si está logeado: Subir fotos + Admin (si es admin) + Cerrar sesión */}
                 <li className="nav-item">
                   <Link
                     to="/up-photo"
@@ -66,6 +74,20 @@ const Navbar = () => {
                     Subir Fotos
                   </Link>
                 </li>
+
+                {/* Mostrar solo si es admin */}
+                {esAdmin && (
+                  <li className="nav-item">
+                    <Link
+                      to="/admin/productos"
+                      className="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
+                    >
+                      <ShoppingBag size={16} className="me-1" />
+                      Admin Productos
+                    </Link>
+                  </li>
+                )}
+
                 <li className="nav-item">
                   <button
                     onClick={handleLogout}

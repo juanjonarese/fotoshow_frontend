@@ -6,6 +6,10 @@ import LoginScreen from "../page/LoginScreen.jsx";
 import ChangePassScreen from "../page/ChangePassScreen.jsx";
 import RecoveryPassMailScreen from "../page/RecoveryPassScreen.jsx";
 import ContactScreen from "../page/ContactScreen.jsx";
+import ProductsScreen from "../page/ProductsScreen.jsx";
+import OneProductScreen from "../page/OneProductScreen.jsx";
+import AdminProductsScreen from "../page/AdminProductsScreen.jsx";
+import ProtectedRoute from "../component/ProtectedRoute.jsx";
 
 const PrincipalRoutes = () => {
   return (
@@ -17,6 +21,16 @@ const PrincipalRoutes = () => {
       <Route path="/changepass" element={<ChangePassScreen />} />
       <Route path="/recoverymail" element={<RecoveryPassMailScreen />} />
       <Route path="/contacto" element={<ContactScreen />} />
+      <Route path="/productos" element={<ProductsScreen />} />
+      <Route path="/productos/:id" element={<OneProductScreen />} />
+      <Route
+        path="/admin/productos"
+        element={
+          <ProtectedRoute rolesPermitidos={["admin"]}>
+            <AdminProductsScreen />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Solo para admins
       <Route
