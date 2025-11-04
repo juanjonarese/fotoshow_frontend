@@ -33,77 +33,35 @@ const OneProductScreen = () => {
     localStorage.setItem("carrito", JSON.stringify(carrito));
   }, [carrito]);
 
-  const agregarAlCarrito = async (producto) => {
-    try {
-      // Actualizar en la base de datos
-      await clientAxios.post("/carrito/agregar", {
-        productoId: producto.id,
-        cantidad: 1,
-      });
-
-      // Actualizar el estado local
-      setCarrito((prev) => {
-        const existe = prev.find((item) => item.id === producto.id);
-        if (existe) {
-          return prev.map((item) =>
-            item.id === producto.id
-              ? { ...item, cantidad: item.cantidad + 1 }
-              : item
-          );
-        }
-        return [...prev, { ...producto, cantidad: 1 }];
-      });
-    } catch (error) {
-      console.error("Error al agregar producto al carrito:", error);
-      MySwal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo agregar el producto al carrito",
-      });
-    }
+  const agregarAlCarrito = (producto) => {
+    // Actualizar el estado local (solo localStorage, sin backend)
+    setCarrito((prev) => {
+      const existe = prev.find((item) => item._id === producto._id);
+      if (existe) {
+        return prev.map((item) =>
+          item._id === producto._id
+            ? { ...item, cantidad: item.cantidad + 1 }
+            : item
+        );
+      }
+      return [...prev, { ...producto, cantidad: 1 }];
+    });
   };
 
-  const quitarDelCarrito = async (id) => {
-    try {
-      // Actualizar en la base de datos
-      await clientAxios.put("/carrito/quitar", {
-        productoId: id,
-        cantidad: 1,
-      });
-
-      // Actualizar el estado local
-      setCarrito((prev) =>
-        prev
-          .map((item) =>
-            item.id === id ? { ...item, cantidad: item.cantidad - 1 } : item
-          )
-          .filter((item) => item.cantidad > 0)
-      );
-    } catch (error) {
-      console.error("Error al quitar producto del carrito:", error);
-      MySwal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo quitar el producto del carrito",
-      });
-    }
+  const quitarDelCarrito = (id) => {
+    // Actualizar el estado local (solo localStorage, sin backend)
+    setCarrito((prev) =>
+      prev
+        .map((item) =>
+          item._id === id ? { ...item, cantidad: item.cantidad - 1 } : item
+        )
+        .filter((item) => item.cantidad > 0)
+    );
   };
 
-  const eliminarProducto = async (id) => {
-    try {
-      // Eliminar de la base de datos
-      await clientAxios.delete(`/carrito/eliminar/${id}`);
-
-      // Actualizar el estado local
-      setCarrito((prev) => prev.filter((item) => item.id !== id));
-    } catch (error) {
-      console.error("Error al eliminar producto del carrito:", error);
-      MySwal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo eliminar el producto del carrito",
-      });
-    }
+  const eliminarProducto = (id) => {
+    // Actualizar el estado local (solo localStorage, sin backend)
+    setCarrito((prev) => prev.filter((item) => item._id !== id));
   };
 
   const crearPreferencia = async () => {
@@ -262,7 +220,7 @@ const OneProductScreen = () => {
               <ListGroup variant="flush">
                 {carrito.map((item) => (
                   <ListGroup.Item
-                    key={item.id}
+                    key={item._id}
                     className="d-flex justify-content-between align-items-center"
                   >
                     <div>
@@ -276,7 +234,7 @@ const OneProductScreen = () => {
                         className="mb-0"
                         style={{ color: "#4caf8f", fontWeight: "600" }}
                       >
-                        Precio: ${item.precio}
+                        Precio: ${item.precio ? item.precio.toFixed(2) : "0.00"}
                       </p>
                     </div>
                     <div className="d-flex gap-2">
@@ -294,14 +252,14 @@ const OneProductScreen = () => {
                           border: "none",
                           color: "#235850",
                         }}
-                        onClick={() => quitarDelCarrito(item.id)}
+                        onClick={() => quitarDelCarrito(item._id)}
                       >
                         ➖
                       </Button>
                       <Button
                         size="sm"
                         style={{ backgroundColor: "#d9534f", border: "none" }}
-                        onClick={() => eliminarProducto(item.id)}
+                        onClick={() => eliminarProducto(item._id)}
                       >
                         🗑
                       </Button>
@@ -314,9 +272,9 @@ const OneProductScreen = () => {
                 <h5 style={{ color: "#57ad88" }}>
                   Total: $
                   {carrito.reduce(
-                    (acc, item) => acc + item.precio * item.cantidad,
+                    (acc, item) => acc + (item.precio || 0) * item.cantidad,
                     0
-                  )}
+                  ).toFixed(2)}
                 </h5>
                 <Button
                   className="mt-2 w-100"
