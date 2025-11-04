@@ -11,17 +11,22 @@ const ProductsScreen = () => {
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Función para obtener productos del backend
+  // Función para obtener productos del backend (excluyendo impresiones)
   const getProducts = async () => {
     try {
       setLoading(true);
       const respuesta = await clientAxios.get("/productos");
 
       if (respuesta.status === 200) {
-        setProducts(respuesta.data.productos || respuesta.data);
+        const todosLosProductos = respuesta.data.productos || respuesta.data;
+        // Filtrar para excluir productos de categoría "impresiones"
+        const productosSinImpresiones = todosLosProductos.filter(
+          (producto) => producto.categoria !== "impresiones"
+        );
+        setProducts(productosSinImpresiones);
         console.log(products);
-        setCurrentProducts(respuesta.data.productos || respuesta.data);
-        localStorage.setItem("productos", JSON.stringify(respuesta.data));
+        setCurrentProducts(productosSinImpresiones);
+        localStorage.setItem("productos", JSON.stringify(productosSinImpresiones));
         console.log(respuesta.data);
       } else {
         MySwal.fire({

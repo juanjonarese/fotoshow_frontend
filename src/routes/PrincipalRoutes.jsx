@@ -9,6 +9,7 @@ import ContactScreen from "../page/ContactScreen.jsx";
 import ProductsScreen from "../page/ProductsScreen.jsx";
 import OneProductScreen from "../page/OneProductScreen.jsx";
 import AdminProductsScreen from "../page/AdminProductsScreen.jsx";
+import ImpresionesScreen from "../page/ImpresionesScreen.jsx";
 import ProtectedRoute from "../component/ProtectedRoute.jsx";
 
 const PrincipalRoutes = () => {
@@ -23,6 +24,7 @@ const PrincipalRoutes = () => {
       <Route path="/contacto" element={<ContactScreen />} />
       <Route path="/productos" element={<ProductsScreen />} />
       <Route path="/productos/:id" element={<OneProductScreen />} />
+      <Route path="/impresiones" element={<ImpresionesScreen />} />
       <Route
         path="/admin/productos"
         element={
