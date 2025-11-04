@@ -79,7 +79,11 @@ const CardProductApp = ({ product }) => {
           {/* Botones */}
           <div className="d-flex gap-2">
             <Link
-              to={`/productos/${product._id}`}
+              to={
+                product.categoria === "impresiones"
+                  ? "/up-photo"
+                  : `/productos/${product._id}`
+              }
               className="btn btn-login flex-grow-1"
               style={{
                 opacity: product.stock === 0 ? 0.5 : 1,
@@ -87,7 +91,9 @@ const CardProductApp = ({ product }) => {
               }}
             >
               <Eye size={16} className="me-1" />
-              Ver detalles
+              {product.categoria === "impresiones"
+                ? "Subir mis fotos"
+                : "Ver detalles"}
             </Link>
           </div>
         </div>
