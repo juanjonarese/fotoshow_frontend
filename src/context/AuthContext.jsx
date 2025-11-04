@@ -7,6 +7,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Nuevo estado de carga
 
   // Al cargar la app, verificamos si hay un token guardado
   useEffect(() => {
@@ -17,6 +18,8 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(true);
       setUser(userData ? JSON.parse(userData) : null);
     }
+
+    setLoading(false); // Terminamos de cargar
   }, []);
 
   // Función para hacer login (la usaremos desde LoginScreen)
@@ -41,6 +44,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     isLoggedIn,
     user,
+    loading,
     login,
     logout,
   };

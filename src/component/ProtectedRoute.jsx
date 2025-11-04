@@ -10,10 +10,13 @@ import Swal from "sweetalert2";
  * @param {string[]} props.rolesPermitidos - Array de roles permitidos (ej: ['admin', 'personal'])
  */
 const ProtectedRoute = ({ children, rolesPermitidos = [] }) => {
-  const { isLoggedIn, user } = useContext(AuthContext);
+  const { isLoggedIn, user, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // No hacer nada mientras está cargando
+    if (loading) return;
+
     // Verificar autenticación
     if (!isLoggedIn) {
       Swal.fire({
@@ -45,7 +48,18 @@ const ProtectedRoute = ({ children, rolesPermitidos = [] }) => {
         return;
       }
     }
-  }, [isLoggedIn, user, rolesPermitidos, navigate]);
+  }, [isLoggedIn, user, loading, rolesPermitidos, navigate]);
+
+  // Mientras está cargando, mostrar un spinner o nada
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "50vh" }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
 
   // Si no está autenticado o no tiene el rol, no renderizar nada
   if (!isLoggedIn) {
