@@ -33,35 +33,96 @@ const OneProductScreen = () => {
     localStorage.setItem("carrito", JSON.stringify(carrito));
   }, [carrito]);
 
-  const agregarAlCarrito = (producto) => {
-    // Actualizar el estado local (solo localStorage, sin backend)
-    setCarrito((prev) => {
-      const existe = prev.find((item) => item._id === producto._id);
-      if (existe) {
-        return prev.map((item) =>
-          item._id === producto._id
-            ? { ...item, cantidad: item.cantidad + 1 }
-            : item
-        );
+  const agregarAlCarrito = async (producto) => {
+    try {
+      // Agregar al carrito del backend
+      const response = await clientAxios.post("/carrito/agregar", {
+        productoId: producto._id,
+        cantidad: 1,
+      });
+
+      // Actualizar el estado local con la respuesta del backend
+      if (response.data.carrito) {
+        const carritoItems = response.data.carrito.items.map((item) => ({
+          _id: item.producto._id,
+          titulo: item.producto.titulo,
+          precio: item.precioUnitario,
+          imagen: item.producto.imagen,
+          stock: item.producto.stock,
+          cantidad: item.cantidad,
+        }));
+        setCarrito(carritoItems);
       }
-      return [...prev, { ...producto, cantidad: 1 }];
-    });
+    } catch (error) {
+      console.error("Error al agregar al carrito:", error);
+      MySwal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.msg || "No se pudo agregar el producto al carrito",
+      });
+    }
   };
 
-  const quitarDelCarrito = (id) => {
-    // Actualizar el estado local (solo localStorage, sin backend)
-    setCarrito((prev) =>
-      prev
-        .map((item) =>
-          item._id === id ? { ...item, cantidad: item.cantidad - 1 } : item
-        )
-        .filter((item) => item.cantidad > 0)
-    );
+  const quitarDelCarrito = async (id) => {
+    try {
+      const item = carrito.find((item) => item._id === id);
+      if (!item) return;
+
+      const nuevaCantidad = item.cantidad - 1;
+
+      // Actualizar cantidad en el backend
+      const response = await clientAxios.put("/carrito/actualizar", {
+        productoId: id,
+        cantidad: nuevaCantidad,
+      });
+
+      // Actualizar estado local
+      if (response.data.carrito) {
+        const carritoItems = response.data.carrito.items.map((item) => ({
+          _id: item.producto._id,
+          titulo: item.producto.titulo,
+          precio: item.precioUnitario,
+          imagen: item.producto.imagen,
+          stock: item.producto.stock,
+          cantidad: item.cantidad,
+        }));
+        setCarrito(carritoItems);
+      }
+    } catch (error) {
+      console.error("Error al quitar del carrito:", error);
+      MySwal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.msg || "No se pudo actualizar el carrito",
+      });
+    }
   };
 
-  const eliminarProducto = (id) => {
-    // Actualizar el estado local (solo localStorage, sin backend)
-    setCarrito((prev) => prev.filter((item) => item._id !== id));
+  const eliminarProducto = async (id) => {
+    try {
+      // Eliminar del backend
+      const response = await clientAxios.delete(`/carrito/eliminar/${id}`);
+
+      // Actualizar estado local
+      if (response.data.carrito) {
+        const carritoItems = response.data.carrito.items.map((item) => ({
+          _id: item.producto._id,
+          titulo: item.producto.titulo,
+          precio: item.precioUnitario,
+          imagen: item.producto.imagen,
+          stock: item.producto.stock,
+          cantidad: item.cantidad,
+        }));
+        setCarrito(carritoItems);
+      }
+    } catch (error) {
+      console.error("Error al eliminar del carrito:", error);
+      MySwal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.msg || "No se pudo eliminar el producto",
+      });
+    }
   };
 
   const crearPreferencia = async () => {
@@ -107,6 +168,30 @@ const OneProductScreen = () => {
       });
     }
   };
+
+  // Cargar carrito del backend al montar el componente
+  useEffect(() => {
+    const cargarCarrito = async () => {
+      try {
+        const response = await clientAxios.get("/carrito");
+        if (response.data.carrito && response.data.carrito.items) {
+          const carritoItems = response.data.carrito.items.map((item) => ({
+            _id: item.producto._id,
+            titulo: item.producto.titulo,
+            precio: item.precioUnitario,
+            imagen: item.producto.imagen,
+            stock: item.producto.stock,
+            cantidad: item.cantidad,
+          }));
+          setCarrito(carritoItems);
+        }
+      } catch (error) {
+        console.error("Error al cargar carrito:", error);
+        // Si hay error (ej: no está logueado), usar localStorage
+      }
+    };
+    cargarCarrito();
+  }, []);
 
   useEffect(() => {
     const obtenerProducto = async () => {
