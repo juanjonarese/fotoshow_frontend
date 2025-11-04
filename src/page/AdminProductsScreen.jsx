@@ -47,10 +47,28 @@ const AdminProductsScreen = () => {
       const response = await clientAxios.post("/productos", nuevoProducto);
       console.log("Producto guardado:", response.data);
 
-      // Actualizá la lista si querés que se vea reflejado al instante
+      // Actualizar la lista para que se vea reflejado al instante
       setProductos([...productos, response.data]);
+
+      // Mostrar mensaje de éxito
+      MySwal.fire({
+        icon: "success",
+        title: "¡Producto cargado con éxito!",
+        text: `El producto "${nuevoProducto.titulo}" se agregó correctamente`,
+        timer: 2500,
+        showConfirmButton: true,
+        confirmButtonText: "Cargar otro producto",
+      });
+
+      // El formulario se limpiará automáticamente desde FormAddProductApp
+      // La página se queda en /admin/productos para seguir cargando
     } catch (error) {
       console.error("Error al agregar producto:", error);
+      MySwal.fire({
+        icon: "error",
+        title: "Error al cargar producto",
+        text: error.response?.data?.msg || "No se pudo agregar el producto",
+      });
     }
   };
 

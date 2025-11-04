@@ -30,13 +30,7 @@ const FormAddProductApp = ({ addProduct }) => {
 
       await addProduct(nuevoProducto);
 
-      MySwal.fire({
-        icon: "success",
-        title: "Producto agregado",
-        text: `El producto "${data.titulo}" se agregó correctamente`,
-        timer: 2000,
-      });
-
+      // El mensaje de éxito se muestra desde AdminProductsScreen
       reset(); // Limpiar formulario
     } catch (error) {
       MySwal.fire({
