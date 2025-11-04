@@ -10,6 +10,7 @@ import ProductsScreen from "../page/ProductsScreen.jsx";
 import OneProductScreen from "../page/OneProductScreen.jsx";
 import AdminProductsScreen from "../page/AdminProductsScreen.jsx";
 import ImpresionesScreen from "../page/ImpresionesScreen.jsx";
+import DashboardScreen from "../page/DashboardScreen.jsx";
 import ProtectedRoute from "../component/ProtectedRoute.jsx";
 
 const PrincipalRoutes = () => {
@@ -30,6 +31,14 @@ const PrincipalRoutes = () => {
         element={
           <ProtectedRoute rolesPermitidos={["admin"]}>
             <AdminProductsScreen />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute rolesPermitidos={["admin"]}>
+            <DashboardScreen />
           </ProtectedRoute>
         }
       />

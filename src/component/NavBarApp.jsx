@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Camera, LogOut, Upload, ShoppingBag } from "lucide-react";
+import { Camera, LogOut, Upload, ShoppingBag, BarChart3 } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import Swal from "sweetalert2";
 
@@ -82,15 +82,26 @@ const Navbar = () => {
 
                 {/* Mostrar solo si es admin */}
                 {esAdmin && (
-                  <li className="nav-item">
-                    <Link
-                      to="/admin/productos"
-                      className="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
-                    >
-                      <ShoppingBag size={16} className="me-1" />
-                      Admin Productos
-                    </Link>
-                  </li>
+                  <>
+                    <li className="nav-item">
+                      <Link
+                        to="/admin/dashboard"
+                        className="btn btn-info btn-sm d-flex align-items-center justify-content-center"
+                      >
+                        <BarChart3 size={16} className="me-1" />
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link
+                        to="/admin/productos"
+                        className="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
+                      >
+                        <ShoppingBag size={16} className="me-1" />
+                        Admin Productos
+                      </Link>
+                    </li>
+                  </>
                 )}
 
                 <li className="nav-item">
