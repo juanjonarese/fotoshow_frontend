@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Camera, LogOut, Upload, ShoppingBag, Image } from "lucide-react";
+import { Camera, LogOut, Upload, ShoppingBag } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import Swal from "sweetalert2";
 
@@ -57,7 +57,6 @@ const Navbar = () => {
             </li>
             <li className="nav-item">
               <Link to="/impresiones" className="nav-link">
-                <Image size={16} className="me-1" style={{ display: "inline" }} />
                 Impresiones
               </Link>
             </li>
