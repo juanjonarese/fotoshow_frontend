@@ -68,9 +68,11 @@ const CardProductApp = ({ product }) => {
 
           {/* Precio */}
           <div className="mb-3">
-            <h4 className="text-success mb-0">${product.precio.toFixed(2)}</h4>
+            <h4 className="text-success mb-0">
+              ${product.precio ? product.precio.toFixed(2) : "0.00"}
+            </h4>
             <small className="text-muted">
-              Stock: {product.stock} {product.stock === 1 ? "unidad" : "unidades"}
+              Stock: {product.stock || 0} {product.stock === 1 ? "unidad" : "unidades"}
             </small>
           </div>
 

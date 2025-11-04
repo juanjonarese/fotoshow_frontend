@@ -161,7 +161,7 @@ const TableProductsApp = ({ products, borrarProducto, updateProduct }) => {
                   />
                 ) : (
                   <span className="text-success fw-bold">
-                    ${product.precio.toFixed(2)}
+                    ${product.precio ? product.precio.toFixed(2) : "0.00"}
                   </span>
                 )}
               </td>
