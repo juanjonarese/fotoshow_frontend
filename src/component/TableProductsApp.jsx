@@ -17,6 +17,7 @@ const TableProductsApp = ({ products, borrarProducto, updateProduct }) => {
       stock: product.stock,
       imagen: product.imagen,
       categoria: product.categoria,
+      destacado: product.destacado || false,
     });
   };
 
@@ -92,6 +93,7 @@ const TableProductsApp = ({ products, borrarProducto, updateProduct }) => {
             <th style={{ width: "100px" }}>Precio</th>
             <th style={{ width: "80px" }}>Stock</th>
             <th style={{ width: "120px" }}>Categoría</th>
+            <th style={{ width: "100px" }}>Destacado</th>
             <th style={{ width: "130px" }}>Acciones</th>
           </tr>
         </thead>
@@ -205,6 +207,30 @@ const TableProductsApp = ({ products, borrarProducto, updateProduct }) => {
                   </select>
                 ) : (
                   <span className="badge bg-secondary">{product.categoria}</span>
+                )}
+              </td>
+
+              {/* Destacado */}
+              <td className="text-center">
+                {editingId === product._id ? (
+                  <div className="form-check d-flex justify-content-center">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={editData.destacado}
+                      onChange={(e) =>
+                        handleInputChange("destacado", e.target.checked)
+                      }
+                    />
+                  </div>
+                ) : (
+                  <span>
+                    {product.destacado ? (
+                      <span className="badge bg-warning text-dark">⭐ Destacado</span>
+                    ) : (
+                      <span className="text-muted">-</span>
+                    )}
+                  </span>
                 )}
               </td>
 

@@ -26,6 +26,7 @@ const FormAddProductApp = ({ addProduct }) => {
         imagen: data.imagen,
         stock: parseInt(data.stock),
         categoria: data.categoria,
+        destacado: data.destacado || false,
       };
 
       await addProduct(nuevoProducto);
@@ -188,6 +189,21 @@ const FormAddProductApp = ({ addProduct }) => {
                       {errors.categoria.message}
                     </div>
                   )}
+                </div>
+
+                {/* Producto Destacado */}
+                <div className="col-12">
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="destacado"
+                      {...register("destacado")}
+                    />
+                    <label className="form-check-label" htmlFor="destacado">
+                      ⭐ <strong>Marcar como producto destacado</strong> (se mostrará en la página principal)
+                    </label>
+                  </div>
                 </div>
 
                 {/* Botón Submit */}

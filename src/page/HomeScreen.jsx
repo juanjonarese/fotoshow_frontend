@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
   Upload,
   Image,
@@ -13,11 +14,15 @@ import {
   Menu,
   X,
   Camera,
+  ShoppingBag,
 } from "lucide-react";
 import "../css/home.css";
+import clientAxios from "../helpers/clientAxios";
+import CardProductApp from "../component/CardProductApp";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
+  const [productosDestacados, setProductosDestacados] = useState([]);
 
   const samplePhotos = [
     "https://images.pexels.com/photos/1183986/pexels-photo-1183986.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop",
@@ -72,6 +77,23 @@ const HomeScreen = () => {
       label: "Satisfacción",
     },
   ];
+
+  // Cargar productos destacados al montar el componente
+  useEffect(() => {
+    const cargarProductosDestacados = async () => {
+      try {
+        const response = await clientAxios.get("/productos");
+        const productos = response.data.productos || response.data;
+        // Filtrar solo los productos destacados y limitar a 4
+        const destacados = productos.filter((p) => p.destacado === true).slice(0, 4);
+        setProductosDestacados(destacados);
+      } catch (error) {
+        console.error("Error al cargar productos destacados:", error);
+      }
+    };
+
+    cargarProductosDestacados();
+  }, []);
 
   // ✨ NUEVA FUNCIÓN: Verifica si hay token y redirige
   const handleComenzar = () => {
@@ -139,6 +161,36 @@ const HomeScreen = () => {
           </div>
         </div>
       </section>
+
+      {/* Productos Destacados Section */}
+      {productosDestacados.length > 0 && (
+        <section className="container py-5">
+          <div className="row mb-4">
+            <div className="col text-center">
+              <h2 className="display-5 fw-bold texto-home mb-2">
+                <Star className="me-2" size={40} style={{ color: "#FFD700" }} />
+                Productos Destacados
+              </h2>
+              <p className="lead text-muted">
+                Los mejores productos para tus recuerdos más especiales
+              </p>
+            </div>
+          </div>
+          <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            {productosDestacados.map((product) => (
+              <CardProductApp key={product._id} product={product} />
+            ))}
+          </div>
+          <div className="row mt-4">
+            <div className="col text-center">
+              <Link to="/productos" className="btn btn-login btn-lg px-5">
+                <ShoppingBag size={20} className="me-2" />
+                Ver Todos los Productos
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="cta-section">
