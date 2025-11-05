@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Camera, LogOut, Upload, ShoppingBag, BarChart3 } from "lucide-react";
+import { Camera, LogOut, Upload, ShoppingBag, BarChart3, ShoppingCart } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import Swal from "sweetalert2";
 
@@ -69,7 +69,16 @@ const Navbar = () => {
             {/* Mostrar según si está logeado o no */}
             {isLoggedIn ? (
               <>
-                {/* Si está logeado: Subir fotos + Admin (si es admin) + Cerrar sesión */}
+                {/* Si está logeado: Carrito + Subir fotos + Admin (si es admin) + Cerrar sesión */}
+                <li className="nav-item">
+                  <Link
+                    to="/carrito"
+                    className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
+                  >
+                    <ShoppingCart size={16} className="me-1" />
+                    Carrito
+                  </Link>
+                </li>
                 <li className="nav-item">
                   <Link
                     to="/up-photo"

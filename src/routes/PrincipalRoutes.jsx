@@ -11,6 +11,10 @@ import OneProductScreen from "../page/OneProductScreen.jsx";
 import AdminProductsScreen from "../page/AdminProductsScreen.jsx";
 import ImpresionesScreen from "../page/ImpresionesScreen.jsx";
 import DashboardScreen from "../page/DashboardScreen.jsx";
+import CarritoScreen from "../page/CarritoScreen.jsx";
+import PaymentSuccessScreen from "../page/PaymentSuccessScreen.jsx";
+import PaymentFailureScreen from "../page/PaymentFailureScreen.jsx";
+import PaymentPendingScreen from "../page/PaymentPendingScreen.jsx";
 import ProtectedRoute from "../component/ProtectedRoute.jsx";
 
 const PrincipalRoutes = () => {
@@ -26,6 +30,10 @@ const PrincipalRoutes = () => {
       <Route path="/productos" element={<ProductsScreen />} />
       <Route path="/productos/:id" element={<OneProductScreen />} />
       <Route path="/impresiones" element={<ImpresionesScreen />} />
+      <Route path="/carrito" element={<CarritoScreen />} />
+      <Route path="/pago/exito" element={<PaymentSuccessScreen />} />
+      <Route path="/pago/fallo" element={<PaymentFailureScreen />} />
+      <Route path="/pago/pendiente" element={<PaymentPendingScreen />} />
       <Route
         path="/admin/productos"
         element={
