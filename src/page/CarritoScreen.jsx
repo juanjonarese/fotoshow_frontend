@@ -167,32 +167,47 @@ const CarritoScreen = () => {
     try {
       setProcesandoPago(true);
 
+      console.log("🔵 Iniciando proceso de pago...");
+
       // Crear preferencia de pago en Mercado Pago
       const response = await clientAxios.post(
         "/mercadopago/crear-preferencia"
       );
 
+      console.log("🟢 Respuesta del backend:", response.data);
+
       if (response.data.preferencia) {
         const { init_point, sandbox_init_point } =
           response.data.preferencia;
 
-        // Usar sandbox_init_point en desarrollo, init_point en producción
-        const urlPago =
-          import.meta.env.MODE === "development"
-            ? sandbox_init_point
-            : init_point;
+        console.log("🔗 init_point:", init_point);
+        console.log("🔗 sandbox_init_point:", sandbox_init_point);
+
+        // Usar sandbox_init_point siempre para credenciales de prueba
+        const urlPago = sandbox_init_point || init_point;
+
+        console.log("🚀 Redirigiendo a:", urlPago);
+
+        if (!urlPago) {
+          throw new Error("No se recibió URL de pago de Mercado Pago");
+        }
 
         // Redirigir al usuario a Mercado Pago
         window.location.href = urlPago;
+      } else {
+        console.error("❌ No se recibió preferencia en la respuesta");
+        throw new Error("No se recibió preferencia de pago");
       }
     } catch (error) {
-      console.error("Error al crear preferencia:", error);
+      console.error("❌ Error al crear preferencia:", error);
+      console.error("❌ Detalles del error:", error.response?.data);
       setProcesandoPago(false);
       Swal.fire({
         icon: "error",
         title: "Error al procesar pago",
         text:
           error.response?.data?.msg ||
+          error.message ||
           "No se pudo iniciar el proceso de pago",
       });
     }
