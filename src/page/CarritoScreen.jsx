@@ -39,7 +39,31 @@ const CarritoScreen = () => {
       const response = await clientAxios.get("/carrito");
 
       if (response.data.carrito && response.data.carrito.items) {
-        setCarrito(response.data.carrito.items);
+        // Filtrar items inválidos (productos que no existen o no tienen datos)
+        const itemsValidos = response.data.carrito.items.filter(item => {
+          const esValido = item.producto &&
+                          item.producto._id &&
+                          item.precioUnitario !== undefined &&
+                          item.subtotal !== undefined;
+
+          if (!esValido) {
+            console.warn("Item inválido encontrado:", item);
+          }
+
+          return esValido;
+        });
+
+        setCarrito(itemsValidos);
+
+        // Si había items inválidos, avisar al usuario
+        if (itemsValidos.length < response.data.carrito.items.length) {
+          Swal.fire({
+            icon: "warning",
+            title: "Productos inválidos removidos",
+            text: "Algunos productos en tu carrito ya no están disponibles y fueron removidos.",
+            timer: 3000,
+          });
+        }
       } else {
         setCarrito([]);
       }
@@ -311,9 +335,9 @@ const CarritoScreen = () => {
 
                         {/* Info del producto */}
                         <div className="col-md-4 col-9">
-                          <h6 className="mb-1">{item.producto.titulo}</h6>
+                          <h6 className="mb-1">{item.producto?.titulo || "Producto sin nombre"}</h6>
                           <p className="text-muted small mb-0">
-                            ${item.precioUnitario.toFixed(2)} c/u
+                            ${(item.precioUnitario || 0).toFixed(2)} c/u
                           </p>
                         </div>
 
@@ -354,14 +378,14 @@ const CarritoScreen = () => {
                             </button>
                           </div>
                           <small className="text-muted">
-                            Stock: {item.producto.stock}
+                            Stock: {item.producto?.stock || 0}
                           </small>
                         </div>
 
                         {/* Subtotal y eliminar */}
                         <div className="col-md-3 col-6 mt-2 mt-md-0 text-end">
                           <p className="fw-bold mb-1 text-success">
-                            ${item.subtotal.toFixed(2)}
+                            ${(item.subtotal || 0).toFixed(2)}
                           </p>
                           <button
                             className="btn btn-outline-danger btn-sm"
