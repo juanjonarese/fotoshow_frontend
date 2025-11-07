@@ -216,8 +216,34 @@ const CarritoScreen = () => {
           throw new Error("No se recibió URL de pago de Mercado Pago");
         }
 
+        // Mostrar alerta de confirmación antes de redirigir
+        await Swal.fire({
+          icon: "success",
+          title: "Redirigiendo a Mercado Pago",
+          text: "Serás redirigido al sistema de pago en un momento...",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
         // Redirigir al usuario a Mercado Pago
+        console.log("⏳ Ejecutando redirect con window.location.href");
         window.location.href = urlPago;
+
+        // Si después de 3 segundos no redirigió, mostrar error
+        setTimeout(() => {
+          console.error("⚠️ El redirect no funcionó después de 3 segundos");
+          setProcesandoPago(false);
+          Swal.fire({
+            icon: "warning",
+            title: "Problema con la redirección",
+            html: `No se pudo redirigir automáticamente. <br><br>
+                   <a href="${urlPago}" target="_blank" class="btn btn-primary">
+                     Hacer clic aquí para ir a Mercado Pago
+                   </a>`,
+            showConfirmButton: false,
+            showCloseButton: true,
+          });
+        }, 3000);
       } else {
         console.error("❌ No se recibió preferencia en la respuesta");
         throw new Error("No se recibió preferencia de pago");
