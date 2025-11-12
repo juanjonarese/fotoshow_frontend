@@ -1,13 +1,16 @@
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { Eye, EyeOff } from "lucide-react";
 import clientAxios from "../helpers/clientAxios";
 
 const RegisterScreen = () => {
   const MySwal = withReactContent(Swal);
   const navigate = useNavigate();
+  const [mostrarPassword, setMostrarPassword] = useState(false);
+  const [mostrarRePassword, setMostrarRePassword] = useState(false);
 
   const {
     register,
@@ -93,12 +96,22 @@ const RegisterScreen = () => {
 
           <div className="mb-3">
             <label className="form-label">Contraseña</label>
-            <input
-              type="password"
-              className="form-control"
-              {...register("contraseniaUsuario", { required: true })}
-              placeholder="••••••••"
-            />
+            <div className="position-relative">
+              <input
+                type={mostrarPassword ? "text" : "password"}
+                className="form-control pe-5"
+                {...register("contraseniaUsuario", { required: true })}
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                className="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
+                onClick={() => setMostrarPassword(!mostrarPassword)}
+                style={{ zIndex: 10, textDecoration: "none" }}
+              >
+                {mostrarPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             {errors.contraseniaUsuario && (
               <p className="text-danger">El campo es obligatorio</p>
             )}
@@ -106,15 +119,25 @@ const RegisterScreen = () => {
 
           <div className="mb-4">
             <label className="form-label">Repetir contraseña</label>
-            <input
-              type="password"
-              className="form-control"
-              {...register("rePassword", {
-                required: true,
-                validate: (value) => value === watch("contraseniaUsuario"),
-              })}
-              placeholder="••••••••"
-            />
+            <div className="position-relative">
+              <input
+                type={mostrarRePassword ? "text" : "password"}
+                className="form-control pe-5"
+                {...register("rePassword", {
+                  required: true,
+                  validate: (value) => value === watch("contraseniaUsuario"),
+                })}
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                className="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
+                onClick={() => setMostrarRePassword(!mostrarRePassword)}
+                style={{ zIndex: 10, textDecoration: "none" }}
+              >
+                {mostrarRePassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             {errors.rePassword && (
               <p className="text-danger">Las contraseñas no coinciden</p>
             )}

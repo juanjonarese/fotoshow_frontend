@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Container, Card } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { Eye, EyeOff } from "lucide-react";
 import clientAxios from "../helpers/clientAxios";
 import Swal from "sweetalert2";
 
@@ -13,6 +14,8 @@ const ChangePassScreen = () => {
   const [nuevaContrasenia, setNuevaContrasenia] = useState("");
   const [confirmarNuevaContrasenia, setConfirmarNuevaContrasenia] =
     useState("");
+  const [mostrarPassword, setMostrarPassword] = useState(false);
+  const [mostrarRePassword, setMostrarRePassword] = useState(false);
 
   const handleClickFormChangePass = async (ev) => {
     ev.preventDefault();
@@ -84,24 +87,46 @@ const ChangePassScreen = () => {
           <Form onSubmit={handleClickFormChangePass}>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Nueva Contraseña</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Ingresá tu nueva contraseña"
-                onChange={(ev) => setNuevaContrasenia(ev.target.value)}
-                value={nuevaContrasenia}
-                required
-              />
+              <div className="position-relative">
+                <Form.Control
+                  type={mostrarPassword ? "text" : "password"}
+                  placeholder="Ingresá tu nueva contraseña"
+                  onChange={(ev) => setNuevaContrasenia(ev.target.value)}
+                  value={nuevaContrasenia}
+                  className="pe-5"
+                  required
+                />
+                <button
+                  type="button"
+                  className="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
+                  onClick={() => setMostrarPassword(!mostrarPassword)}
+                  style={{ zIndex: 10, textDecoration: "none" }}
+                >
+                  {mostrarPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Repetir Contraseña</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Confirmá tu nueva contraseña"
-                onChange={(ev) => setConfirmarNuevaContrasenia(ev.target.value)}
-                value={confirmarNuevaContrasenia}
-                required
-              />
+              <div className="position-relative">
+                <Form.Control
+                  type={mostrarRePassword ? "text" : "password"}
+                  placeholder="Confirmá tu nueva contraseña"
+                  onChange={(ev) => setConfirmarNuevaContrasenia(ev.target.value)}
+                  value={confirmarNuevaContrasenia}
+                  className="pe-5"
+                  required
+                />
+                <button
+                  type="button"
+                  className="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
+                  onClick={() => setMostrarRePassword(!mostrarRePassword)}
+                  style={{ zIndex: 10, textDecoration: "none" }}
+                >
+                  {mostrarRePassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </Form.Group>
 
             <div className="text-center mt-4">

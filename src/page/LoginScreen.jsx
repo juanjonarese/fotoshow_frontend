@@ -1,8 +1,9 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import clientAxios from "../helpers/clientAxios";
 import { AuthContext } from "../context/AuthContext";
 
@@ -10,6 +11,7 @@ const LoginScreen = (props) => {
   const { handleClose } = props;
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const [mostrarPassword, setMostrarPassword] = useState(false);
 
   const {
     register,
@@ -100,12 +102,22 @@ const LoginScreen = (props) => {
 
               <div className="mb-4 position-relative">
                 <label className="form-label">Contraseña</label>
-                <input
-                  type="password"
-                  className="form-control form-control-lg ps-4"
-                  {...register("contraseniaUsuario", { required: true })}
-                  placeholder="••••••••"
-                />
+                <div className="position-relative">
+                  <input
+                    type={mostrarPassword ? "text" : "password"}
+                    className="form-control form-control-lg ps-4 pe-5"
+                    {...register("contraseniaUsuario", { required: true })}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
+                    onClick={() => setMostrarPassword(!mostrarPassword)}
+                    style={{ zIndex: 10, textDecoration: "none" }}
+                  >
+                    {mostrarPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
                 {errors.contraseniaUsuario && (
                   <p role="alert" className="text-danger">
                     El campo es obligatorio
