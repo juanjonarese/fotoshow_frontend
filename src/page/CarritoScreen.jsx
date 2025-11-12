@@ -201,14 +201,12 @@ const CarritoScreen = () => {
       console.log("🟢 Respuesta del backend:", response.data);
 
       if (response.data.preferencia) {
-        const { init_point, sandbox_init_point } =
-          response.data.preferencia;
+        const { init_point } = response.data.preferencia;
 
         console.log("🔗 init_point:", init_point);
-        console.log("🔗 sandbox_init_point:", sandbox_init_point);
 
-        // Usar sandbox_init_point siempre para credenciales de prueba
-        const urlPago = sandbox_init_point || init_point;
+        // Usar init_point con credenciales de TEST (no sandbox_init_point)
+        const urlPago = init_point;
 
         console.log("🚀 Redirigiendo a:", urlPago);
 
