@@ -136,35 +136,50 @@ const OneProductScreen = () => {
         return;
       }
 
-      // Preparar datos del pedido
-      const datosPedido = {
-        productos: carrito.map((item) => ({
-          productoId: item._id || item.id,
-          cantidad: item.cantidad,
-          precio: item.precio,
-        })),
-        total: carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0),
-      };
-
       MySwal.fire({
         icon: "info",
         title: "Procesando pago...",
-        text: "Redirigiendo a pasarela de pago",
-        timer: 2000,
+        text: "Redirigiendo a Mercado Pago...",
         showConfirmButton: false,
+        allowOutsideClick: false,
       });
 
-      // TODO: Aquí deberás integrar con tu backend para crear preferencia de Mercado Pago
-      // const response = await clientAxios.post("/pagos/crear-preferencia", datosPedido);
-      // window.location.href = response.data.init_point; // Redirigir a Mercado Pago
+      // Crear preferencia de pago en Mercado Pago
+      const response = await clientAxios.post("/mercadopago/crear-preferencia");
 
-      console.log("Datos del pedido:", datosPedido);
+      console.log("🟢 Respuesta del backend:", response.data);
+
+      if (response.data.preferencia) {
+        const { init_point } = response.data.preferencia;
+
+        console.log("🔗 init_point:", init_point);
+
+        if (!init_point) {
+          throw new Error("No se recibió URL de pago de Mercado Pago");
+        }
+
+        // Mostrar alerta de confirmación antes de redirigir
+        await MySwal.fire({
+          icon: "success",
+          title: "Redirigiendo a Mercado Pago",
+          text: "Serás redirigido al sistema de pago en un momento...",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        // Redirigir a Mercado Pago
+        console.log("🚀 Redirigiendo a:", init_point);
+        window.location.href = init_point;
+      } else {
+        throw new Error(response.data.msg || "Error al crear preferencia de pago");
+      }
     } catch (error) {
-      console.error("Error al crear la preferencia:", error);
+      console.error("❌ Error al crear la preferencia:", error);
       MySwal.fire({
         icon: "error",
-        title: "Error",
-        text: error.response?.data?.message || "No se pudo procesar el pago",
+        title: "Error al procesar el pago",
+        text: error.response?.data?.msg || error.message || "No se pudo procesar el pago. Por favor, intenta nuevamente.",
+        confirmButtonText: "Entendido",
       });
     }
   };

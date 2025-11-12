@@ -1,13 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle, ShoppingBag, Home } from "lucide-react";
+import clientAxios from "../helpers/clientAxios";
 
 const PaymentSuccessScreen = () => {
   const navigate = useNavigate();
+  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    // Limpiar localStorage del carrito (si lo usabas)
-    localStorage.removeItem("carrito");
+    const limpiarCarrito = async () => {
+      try {
+        // Limpiar localStorage del carrito
+        localStorage.removeItem("carrito");
+
+        // Vaciar el carrito del backend
+        await clientAxios.delete("/carrito/vaciar");
+
+        console.log("✅ Carrito vaciado exitosamente");
+      } catch (error) {
+        console.error("❌ Error al vaciar el carrito:", error);
+        // No mostrar error al usuario, ya pagó exitosamente
+      } finally {
+        setCargando(false);
+      }
+    };
+
+    limpiarCarrito();
   }, []);
 
   return (
