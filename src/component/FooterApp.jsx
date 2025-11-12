@@ -4,7 +4,7 @@ import { Camera, MapPin, Phone, Instagram, Facebook } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-dark text-white mt-5">
+    <footer className="bg-dark text-white">
       <div className="container py-5">
         <div className="row g-4">
           {/* Columna 1: Logo y descripción */}
