@@ -8,7 +8,7 @@ import {
   ListGroup,
   Badge,
 } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import clientAxios from "../helpers/clientAxios";
@@ -16,6 +16,7 @@ import "../css/unProducto.css";
 
 const OneProductScreen = () => {
   const MySwal = withReactContent(Swal);
+  const navigate = useNavigate();
   const [mostrarCarrito, setMostrarCarrito] = useState(false);
   const [preferenceId, setPreferenceId] = useState(null);
   const { id } = useParams();
@@ -368,21 +369,32 @@ const OneProductScreen = () => {
                 ))}
               </ListGroup>
 
-              <div className="mt-3 text-end">
-                <h5 style={{ color: "#57ad88" }}>
+              <div className="mt-3">
+                <h5 style={{ color: "#57ad88" }} className="text-end">
                   Total: $
                   {carrito.reduce(
                     (acc, item) => acc + (item.precio || 0) * item.cantidad,
                     0
                   ).toFixed(2)}
                 </h5>
-                <Button
-                  className="mt-2 w-100"
-                  style={{ backgroundColor: "#57ad88", border: "none" }}
-                  onClick={crearPreferencia}
-                >
-                  Proceder a Pagar
-                </Button>
+                <div className="d-grid gap-2">
+                  <Button
+                    className="mt-2"
+                    style={{ backgroundColor: "#57ad88", border: "none" }}
+                    onClick={crearPreferencia}
+                  >
+                    Proceder a Pagar
+                  </Button>
+                  <Button
+                    variant="outline-secondary"
+                    onClick={() => {
+                      setMostrarCarrito(false);
+                      navigate("/productos");
+                    }}
+                  >
+                    Seguir Comprando
+                  </Button>
+                </div>
               </div>
             </>
           )}
