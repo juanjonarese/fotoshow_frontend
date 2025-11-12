@@ -11,9 +11,17 @@ const Navbar = () => {
   // Verificar si el usuario es admin
   const esAdmin = user?.rol === "admin";
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    // Primero navegar a home
     navigate("/");
+
+    // Pequeño delay para asegurar que la navegación se complete
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Luego hacer logout
+    logout();
+
+    // Mostrar mensaje de éxito
     Swal.fire({
       icon: "success",
       title: "Sesión cerrada",
